@@ -14722,45 +14722,67 @@ Note: you may need to restart the kernel to use updated packages.
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
 <span class="kn">from</span> <span class="nn">scrapy.crawler</span> <span class="kn">import</span> <span class="n">CrawlerProcess</span>
-<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="k">class</span> <span class="nc">ScrapingWeb</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">"liputan6"</span>
-    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'https://www.liputan6.com/pemilu'</span><span class="p">]</span> 
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"kompas"</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'https://indeks.kompas.com/?site=bola'</span><span class="p">]</span>
 
     <span class="n">custom_settings</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">'FEED_FORMAT'</span><span class="p">:</span> <span class="s1">'csv'</span><span class="p">,</span>
-        <span class="s1">'FEED_URI'</span><span class="p">:</span> <span class="s1">'berita.csv'</span><span class="p">,</span>
+        <span class="s1">'FEED_URI'</span><span class="p">:</span> <span class="s1">'bola.csv'</span><span class="p">,</span>
         <span class="s1">'LOG_LEVEL'</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
     <span class="p">}</span>
+    
+    <span class="n">article_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_articles</span> <span class="o">=</span> <span class="mi">50</span>
 
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
-        <span class="n">articles</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'div.articles--iridescent-list'</span><span class="p">)</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'a.article-link::attr(href)'</span><span class="p">)</span><span class="o">.</span><span class="n">getall</span><span class="p">()</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">articles</span><span class="p">)</span><span class="si">}</span><span class="s2"> articles."</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'span.articles--iridescent-list--text-item__title-link-text::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="n">summary</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'div.articles--iridescent-list--text-item__summary::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="n">category</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'a.articles--iridescent-list--text-item__category::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="n">date</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'time.timeago::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">article_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_articles</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Max articles limit reached."</span><span class="p">)</span>
+                <span class="k">return</span>  <span class="c1"># Hentikan parsing jika batas artikel sudah tercapai</span>
+            
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Scraping article: </span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_article</span><span class="p">)</span>
 
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Title: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">, Summary: </span><span class="si">{</span><span class="n">summary</span><span class="si">}</span><span class="s2">, Category: </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">, Date: </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">next_page</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'a.paging__link--next::attr(href)'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">next_page</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">article_count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_articles</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found next page: </span><span class="si">{</span><span class="n">next_page</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">next_page</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"No next page found."</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">title</span> <span class="ow">and</span> <span class="n">summary</span> <span class="ow">and</span> <span class="n">category</span> <span class="ow">and</span> <span class="n">date</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="p">{</span>
-                    <span class="s1">'judul'</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
-                    <span class="s1">'isi'</span><span class="p">:</span> <span class="n">summary</span><span class="p">,</span>
-                    <span class="s1">'kategori'</span><span class="p">:</span> <span class="n">category</span><span class="p">,</span>
-                    <span class="s1">'tanggal'</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"One or more fields are missing data."</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parse_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">article_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_articles</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c1"># Jika jumlah artikel sudah tercapai, hentikan</span>
+
+        <span class="n">judul</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'h1.read__title::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">waktu</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'div.read__time::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">konten</span> <span class="o">=</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">'//div[@class="read__content"]//text()[not(ancestor::script)]'</span><span class="p">)</span><span class="o">.</span><span class="n">getall</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">kategori</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">'li.breadcrumb__item:nth-child(2) span::text'</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Parsed article: </span><span class="si">{</span><span class="n">judul</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">waktu</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">kategori</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">judul</span> <span class="ow">and</span> <span class="n">konten</span> <span class="ow">and</span> <span class="n">kategori</span> <span class="ow">and</span> <span class="n">waktu</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">article_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s1">'judul'</span><span class="p">:</span> <span class="n">judul</span><span class="p">,</span>
+                <span class="s1">'waktu'</span><span class="p">:</span> <span class="n">waktu</span><span class="p">,</span>
+                <span class="s1">'url'</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+                <span class="s1">'konten'</span><span class="p">:</span> <span class="n">konten</span><span class="p">,</span>
+                <span class="s1">'kategori'</span><span class="p">:</span> <span class="n">kategori</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"One or more fields are missing data."</span><span class="p">)</span>
 
 <span class="c1"># Memulai proses crawling</span>
 <span class="n">process</span> <span class="o">=</span> <span class="n">CrawlerProcess</span><span class="p">()</span>
 <span class="n">process</span><span class="o">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">ScrapingWeb</span><span class="p">)</span>
-<span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># Gunakan reactor.run() untuk memulai event loop</span>
+<span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -14877,50 +14899,6 @@ See the documentation of the &#39;REQUEST_FINGERPRINTER_IMPLEMENTATION&#39; sett
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pandas</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Requirement already satisfied: pandas in c:\users\slm\anaconda3\lib\site-packages (1.5.3)
-Requirement already satisfied: python-dateutil&gt;=2.8.1 in c:\users\slm\anaconda3\lib\site-packages (from pandas) (2.8.2)
-Requirement already satisfied: pytz&gt;=2020.1 in c:\users\slm\anaconda3\lib\site-packages (from pandas) (2022.7)
-Requirement already satisfied: numpy&gt;=1.21.0 in c:\users\slm\anaconda3\lib\site-packages (from pandas) (1.24.3)
-Requirement already satisfied: six&gt;=1.5 in c:\users\slm\anaconda3\lib\site-packages (from python-dateutil&gt;=2.8.1-&gt;pandas) (1.16.0)
-Note: you may need to restart the kernel to use updated packages.
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -14942,10 +14920,14 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_pemilu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/Makmunalji/PencarianPenambanganWeb/master/berita.csv'</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_bola</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'bola.csv'</span><span class="p">)</span>
+<span class="n">data_health</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'health.csv'</span><span class="p">)</span>
+
+<span class="n">kompas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data_bola</span><span class="p">,</span> <span class="n">data_health</span><span class="p">])</span>
+<span class="n">kompas</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'kompas.csv'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14958,10 +14940,10 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_pemilu</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kompas</span>
 </pre></div>
 
      </div>
@@ -14979,7 +14961,7 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 
 
 
@@ -15003,56 +14985,104 @@ Note: you may need to restart the kernel to use updated packages.
     <tr style="text-align: right;">
       <th></th>
       <th>judul</th>
-      <th>isi</th>
+      <th>waktu</th>
+      <th>url</th>
+      <th>konten</th>
       <th>kategori</th>
-      <th>tanggal</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Ridwan Kamil Bakal Lanjutkan Program Gubernur ...</td>
-      <td>Ridwan Kamil mengaku didorong maju oleh Presid...</td>
-      <td>Pemilu</td>
-      <td>02 Sep 2024 19:05</td>
+      <td>MotoGP San Marino 2024: Ketika Marquez Menang ...</td>
+      <td>- 09/09/2024, 05:00 WIB</td>
+      <td>https://www.kompas.com/motogp/read/2024/09/09/...</td>
+      <td>KOMPAS.com - Marc Marquez sukses memenangi Mot...</td>
+      <td>Bola</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Ridwan Kamil Akan Tanam Pohon 3 Kali Lipat di ...</td>
-      <td>Menurut Ridwan Kamil, wilayah Jakarta yang rin...</td>
-      <td>Pemilu</td>
-      <td>02 Sep 2024 15:01</td>
+      <td>Klasemen PON XXI 2024: Futsal Gagal Emas, Jati...</td>
+      <td>- 09/09/2024, 07:59 WIB</td>
+      <td>https://www.kompas.com/sports/read/2024/09/09/...</td>
+      <td>KOMPAS.com - Tim futsal Jawa Timur (Jatim) gag...</td>
+      <td>Bola</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Jadi Anggota DPRD Jakarta Muda, Syafi Djohan S...</td>
-      <td>Ia bersyukur bisa mendapat mandat rakyat denga...</td>
-      <td>Pemilu</td>
-      <td>02 Sep 2024 08:50</td>
+      <td>Hasil One Pride MMA 82: Frans Sormin Bekuk Jak...</td>
+      <td>- 09/09/2024, 14:31 WIB</td>
+      <td>https://www.kompas.com/sports/read/2024/09/09/...</td>
+      <td>KOMPAS.com - Frans Lincol Sormin mengalahkan J...</td>
+      <td>Bola</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Ridwan Kamil Ingin Debat Pilkada Jakarta 2024 ...</td>
-      <td>Ridwan Kamil mengibaratkan persaingan paslon d...</td>
-      <td>Pemilu</td>
-      <td>01 Sep 2024 19:27</td>
+      <td>Indonesia Vs Australia, Kata Manajer Timnas so...</td>
+      <td>- 09/09/2024, 10:29 WIB</td>
+      <td>https://bola.kompas.com/read/2024/09/09/102929...</td>
+      <td>KOMPAS.com - Timnas Indonesia belum menentukan...</td>
+      <td>Bola</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Rano Karno Setuju JIS Jadi Markas Persija Jakarta</td>
-      <td>Bakal calon wakil gubernur Jakarta, Rano Karno...</td>
-      <td>Pemilu</td>
-      <td>01 Sep 2024 14:35</td>
+      <td>Dampak Kehadiran Marteen Paes untuk Persaingan...</td>
+      <td>- 09/09/2024, 11:30 WIB</td>
+      <td>https://bola.kompas.com/read/2024/09/09/113000...</td>
+      <td>KOMPAS.com - Penampilan penjaga gawang timnas ...</td>
+      <td>Bola</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>Pramono-Rano Serap Keluhan Warga Soal Kepadata...</td>
-      <td>Pasangan bakal calon gubernur dan bakal calon ...</td>
-      <td>Pemilu</td>
-      <td>01 Sep 2024 11:00</td>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>Penurunan Apa Saja yang Terjadi pada Lansia? I...</td>
+      <td>- 05/09/2024, 18:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05180000468/...</td>
+      <td>KOMPAS.com - Seiring bertambahnya umur, setiap...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>Apakah Minum Kopi Pahit Bagus untuk Kesehatan?...</td>
+      <td>- 05/09/2024, 16:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05160000768/...</td>
+      <td>KOMPAS.com - Kopi kerap diminum untuk mengatas...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>Sering Digunakan untuk Diet, Ini Manfaat Keseh...</td>
+      <td>- 05/09/2024, 13:37 WIB</td>
+      <td>https://health.kompas.com/read/24I05133717468/...</td>
+      <td>KOMPAS.com - Dalam beberapa tahun terakhir, cu...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>Kenali "BEACH", Akronim untuk Tanda Peringatan...</td>
+      <td>- 05/09/2024, 14:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05140000068/...</td>
+      <td>KOMPAS.com - Gejala kanker ovarium sering kali...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>Apakah Bisa Orang Tanpa Diabetes Mengalami Hip...</td>
+      <td>- 05/09/2024, 12:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05120000068/...</td>
+      <td>KOMPAS.com - Hipoglikemia umum terjadi pada pe...</td>
+      <td>Health</td>
     </tr>
   </tbody>
 </table>
+<p>100 rows × 5 columns</p>
 </div>
 </div>
 
