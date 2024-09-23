@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Vector Space Model</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Logistic Regression</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14573,43 +14573,139 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </script>
     <!-- End of mathjax configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<h3 style="text-align: center;"><a href="index.html" style="font-weight: bold;">KEMBALI KE AWAL</a></h3>
+  <h3 style="text-align: center;"><a href="Vector Space Model.html" style="font-weight: bold;">KEMBALI KE HALAMAN SEBELUMNYA</a></h3>
+
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="1.-Import-Library">1. Import Library<a class="anchor-link" href="#1.-Import-Library">&#182;</a></h2><ul>
-<li>pandas: Digunakan untuk manipulasi dan analisis data, khususnya dalam bentuk tabel (DataFrame). </li>
-<li>nltk: Toolkit untuk pemrosesan teks (NLP), seperti tokenisasi, stemming, lemmatization, dan penghilangan stopwords. </li>
-<li>string: Modul bawaan untuk manipulasi teks, misalnya penghapusan tanda baca. </li>
-<li>re: Modul untuk operasi regular expressions, digunakan untuk pencarian atau manipulasi pola teks.</li>
-<li>CountVectorizer mengubah teks menjadi vektor numerik di mana setiap kolom mewakili sebuah kata unik (disebut term) dari seluruh korpus (kumpulan teks).</li>
-</ul>
+<h1 id="Implementasi">Implementasi<a class="anchor-link" href="#Implementasi">&#182;</a></h1>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Library-yang-digunakan">Library yang digunakan<a class="anchor-link" href="#Library-yang-digunakan">&#182;</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>gdown
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Requirement already satisfied: gdown in c:\users\slm\anaconda3\lib\site-packages (5.2.0)
+Requirement already satisfied: beautifulsoup4 in c:\users\slm\anaconda3\lib\site-packages (from gdown) (4.12.2)
+Requirement already satisfied: filelock in c:\users\slm\anaconda3\lib\site-packages (from gdown) (3.9.0)
+Requirement already satisfied: requests[socks] in c:\users\slm\anaconda3\lib\site-packages (from gdown) (2.31.0)
+Requirement already satisfied: tqdm in c:\users\slm\anaconda3\lib\site-packages (from gdown) (4.65.0)
+Requirement already satisfied: soupsieve&gt;1.2 in c:\users\slm\anaconda3\lib\site-packages (from beautifulsoup4-&gt;gdown) (2.4)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in c:\users\slm\anaconda3\lib\site-packages (from requests[socks]-&gt;gdown) (2.0.4)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in c:\users\slm\anaconda3\lib\site-packages (from requests[socks]-&gt;gdown) (3.4)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in c:\users\slm\anaconda3\lib\site-packages (from requests[socks]-&gt;gdown) (1.26.16)
+Requirement already satisfied: certifi&gt;=2017.4.17 in c:\users\slm\anaconda3\lib\site-packages (from requests[socks]-&gt;gdown) (2023.7.22)
+Requirement already satisfied: PySocks!=1.5.7,&gt;=1.5.6 in c:\users\slm\anaconda3\lib\site-packages (from requests[socks]-&gt;gdown) (1.7.1)
+Requirement already satisfied: colorama in c:\users\slm\anaconda3\lib\site-packages (from tqdm-&gt;gdown) (0.4.6)
+</pre>
+</div>
+</div>
 
 </div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>Sastrawi
+</pre></div>
+
+     </div>
 </div>
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Requirement already satisfied: Sastrawi in c:\users\slm\anaconda3\lib\site-packages (1.0.1)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">nltk</span>
-<span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">import</span> <span class="nn">re</span>
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">gdown</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
-<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
-<span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="kn">import</span> <span class="n">PorterStemmer</span><span class="p">,</span> <span class="n">WordNetLemmatizer</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfTransformer</span>
+<span class="kn">from</span> <span class="nn">Sastrawi.Stemmer.StemmerFactory</span> <span class="kn">import</span> <span class="n">StemmerFactory</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
 </pre></div>
 
      </div>
@@ -14622,12 +14718,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'punkt'</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">nltk</span>
 <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'stopwords'</span><span class="p">)</span>
-<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'wordnet'</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14649,14 +14744,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>[nltk_data] Downloading package punkt to
+<pre>[nltk_data] Downloading package stopwords to
 [nltk_data]     C:\Users\SLM\AppData\Roaming\nltk_data...
-[nltk_data]   Unzipping tokenizers\punkt.zip.
-[nltk_data] Downloading package stopwords to
-[nltk_data]     C:\Users\SLM\AppData\Roaming\nltk_data...
-[nltk_data]   Unzipping corpora\stopwords.zip.
-[nltk_data] Downloading package wordnet to
-[nltk_data]     C:\Users\SLM\AppData\Roaming\nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
 </pre>
 </div>
 </div>
@@ -14664,7 +14754,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 
 
 
@@ -14679,54 +14769,22 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="2.-Load-dataset">2. Load dataset<a class="anchor-link" href="#2.-Load-dataset">&#182;</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># membaca dataset bola dan health menggunakan modul read_CSV</span>
-<span class="n">bola</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'bola.csv'</span><span class="p">)</span>
-<span class="n">health</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'health.csv'</span><span class="p">)</span>
-
-<span class="c1"># menggabungkan kedua dataset menngunakan concat</span>
-<span class="n">berita</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">bola</span><span class="p">,</span> <span class="n">health</span><span class="p">])</span>
-
-<span class="c1"># menyimpan dataset yang digabung menjadi file csv baru</span>
-<span class="n">berita</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'berita.csv'</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># data csv sebelumnya disimpan pada variable berita</span>
-<span class="n">berita</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'berita.csv'</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Nama file yang akan dibaca</span>
+<span class="n">file_name</span> <span class="o">=</span> <span class="s1">'kompas.csv'</span>
 
-<span class="c1"># menampilkan data brita indeks teratas</span>
-<span class="n">berita</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="c1"># Membaca file CSV dari folder lokal</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+<span class="c1"># Tampilkan beberapa baris pertama dari file CSV</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 
      </div>
@@ -14744,7 +14802,83 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>                                               judul  \
+0  MotoGP San Marino 2024: Ketika Marquez Menang ...   
+1  Klasemen PON XXI 2024: Futsal Gagal Emas, Jati...   
+2  Hasil One Pride MMA 82: Frans Sormin Bekuk Jak...   
+3  Indonesia Vs Australia, Kata Manajer Timnas so...   
+4  Dampak Kehadiran Marteen Paes untuk Persaingan...   
+
+                      waktu  \
+0   - 09/09/2024, 05:00 WIB   
+1   - 09/09/2024, 07:59 WIB   
+2   - 09/09/2024, 14:31 WIB   
+3   - 09/09/2024, 10:29 WIB   
+4   - 09/09/2024, 11:30 WIB   
+
+                                                 url  \
+0  https://www.kompas.com/motogp/read/2024/09/09/...   
+1  https://www.kompas.com/sports/read/2024/09/09/...   
+2  https://www.kompas.com/sports/read/2024/09/09/...   
+3  https://bola.kompas.com/read/2024/09/09/102929...   
+4  https://bola.kompas.com/read/2024/09/09/113000...   
+
+                                              konten kategori  
+0  KOMPAS.com - Marc Marquez sukses memenangi Mot...     Bola  
+1  KOMPAS.com - Tim futsal Jawa Timur (Jatim) gag...     Bola  
+2  KOMPAS.com - Frans Lincol Sormin mengalahkan J...     Bola  
+3  KOMPAS.com - Timnas Indonesia belum menentukan...     Bola  
+4  KOMPAS.com - Penampilan penjaga gawang timnas ...     Bola  
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Dataset">Dataset<a class="anchor-link" href="#Dataset">&#182;</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 
 
 
@@ -14767,7 +14901,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Unnamed: 0</th>
       <th>judul</th>
       <th>waktu</th>
       <th>url</th>
@@ -14778,7 +14911,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
   <tbody>
     <tr>
       <th>0</th>
-      <td>0</td>
       <td>MotoGP San Marino 2024: Ketika Marquez Menang ...</td>
       <td>- 09/09/2024, 05:00 WIB</td>
       <td>https://www.kompas.com/motogp/read/2024/09/09/...</td>
@@ -14787,7 +14919,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </tr>
     <tr>
       <th>1</th>
-      <td>1</td>
       <td>Klasemen PON XXI 2024: Futsal Gagal Emas, Jati...</td>
       <td>- 09/09/2024, 07:59 WIB</td>
       <td>https://www.kompas.com/sports/read/2024/09/09/...</td>
@@ -14796,7 +14927,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </tr>
     <tr>
       <th>2</th>
-      <td>2</td>
       <td>Hasil One Pride MMA 82: Frans Sormin Bekuk Jak...</td>
       <td>- 09/09/2024, 14:31 WIB</td>
       <td>https://www.kompas.com/sports/read/2024/09/09/...</td>
@@ -14805,7 +14935,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </tr>
     <tr>
       <th>3</th>
-      <td>3</td>
       <td>Indonesia Vs Australia, Kata Manajer Timnas so...</td>
       <td>- 09/09/2024, 10:29 WIB</td>
       <td>https://bola.kompas.com/read/2024/09/09/102929...</td>
@@ -14814,15 +14943,63 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </tr>
     <tr>
       <th>4</th>
-      <td>4</td>
       <td>Dampak Kehadiran Marteen Paes untuk Persaingan...</td>
       <td>- 09/09/2024, 11:30 WIB</td>
       <td>https://bola.kompas.com/read/2024/09/09/113000...</td>
       <td>KOMPAS.com - Penampilan penjaga gawang timnas ...</td>
       <td>Bola</td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>Penurunan Apa Saja yang Terjadi pada Lansia? I...</td>
+      <td>- 05/09/2024, 18:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05180000468/...</td>
+      <td>KOMPAS.com - Seiring bertambahnya umur, setiap...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>Apakah Minum Kopi Pahit Bagus untuk Kesehatan?...</td>
+      <td>- 05/09/2024, 16:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05160000768/...</td>
+      <td>KOMPAS.com - Kopi kerap diminum untuk mengatas...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>Sering Digunakan untuk Diet, Ini Manfaat Keseh...</td>
+      <td>- 05/09/2024, 13:37 WIB</td>
+      <td>https://health.kompas.com/read/24I05133717468/...</td>
+      <td>KOMPAS.com - Dalam beberapa tahun terakhir, cu...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>Kenali "BEACH", Akronim untuk Tanda Peringatan...</td>
+      <td>- 05/09/2024, 14:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05140000068/...</td>
+      <td>KOMPAS.com - Gejala kanker ovarium sering kali...</td>
+      <td>Health</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>Apakah Bisa Orang Tanpa Diabetes Mengalami Hip...</td>
+      <td>- 05/09/2024, 12:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05120000068/...</td>
+      <td>KOMPAS.com - Hipoglikemia umum terjadi pada pe...</td>
+      <td>Health</td>
+    </tr>
   </tbody>
 </table>
+<p>151 rows × 5 columns</p>
 </div>
 </div>
 
@@ -14839,74 +15016,30 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3.-Preprocess-Dataset">3. Preprocess Dataset<a class="anchor-link" href="#3.-Preprocess-Dataset">&#182;</a></h2>
+<h3 id="Jumlah-Dataset-Per-Label">Jumlah Dataset Per Label<a class="anchor-link" href="#Jumlah-Dataset-Per-Label">&#182;</a></h3>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="c1"># Lowercasing</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    
-    <span class="c1"># Hapus angka</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\d+'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-    
-    <span class="c1"># Tokenization</span>
-    <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    
-    <span class="c1"># Hapus tanda baca</span>
-    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()]</span>
-    
-    <span class="c1"># Stopword removal</span>
-    <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">'english'</span><span class="p">))</span>
-    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
-    
-    <span class="c1"># Lemmatization</span>
-    <span class="n">lemmatizer</span> <span class="o">=</span> <span class="n">WordNetLemmatizer</span><span class="p">()</span>
-    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">lemmatizer</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
-    
-    <span class="c1"># Gabungkan kembali token menjadi string</span>
-    <span class="k">return</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Preprocessing seluruh data</span>
-<span class="n">berita</span><span class="p">[</span><span class="s1">'processed_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">berita</span><span class="p">[</span><span class="s1">'konten'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">preprocess_text</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[56]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">berita</span><span class="p">[</span><span class="s1">'processed_text'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Hitung jumlah artikel per kategori</span>
+<span class="n">category_counts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'kategori'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+<span class="c1"># Tampilkan grafik batang</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">category_counts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">'bar'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'skyblue'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Jumlah Artikel per Kategori'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Kategori'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Jumlah Artikel'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -14924,13 +15057,219 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[56]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 
 
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>&#39;marc marquez sukses memenangi motogp san marino pebalap beralias baby alien itu mengakui adanya bantuan hujan rentang sepekan ini terasa begitu indah bagi pebalap gresini racing marc marquez bagaimana tidak setelah sempat melalui tiga tahun tanpa kemenangan pada balapan motogp marquez langsung berjaya dan finis pertama dalam dua seri beruntun yakni di aragon dan san marino kemenangannya di motogp aragon pekan lalu mengakhiri penantian marquez selama hari untuk berdiri di podium pertama selang sepekan marquez kembali naik podium tertinggi di balapan motogp san marino yang digelar di sirkuit misano minggu baca juga klasemen motogp usai gp san marino marquez bagnaia tempel martin di puncak marquez finis lebih dari tiga detik di depan francesco bagnaia ducati lenovo team yang memulai balapan dari posisi terdepan pebalap asal cervera itu melesat dari posisi sembilan di grid dan memimpin balapan saat lintasan basah sesaat akibat guyuran hujan ringan bantuan hujan ini diakui oleh marquez pemilik enam gelar juara dunia di kelas motogp ketika mulai turun hujan di layar saat itulah saya memutuskan untuk maju menyerang atau mengambil lebih banyak risiko dalam satu putaran saya berhasil melewati lima pebalap dan memimpin balapan kata marquez kepada para wartawan ketika turun hujan marquez tak gegabah untuk mengganti ban seperti jorge martin pramac racing keputusan jorge martin untuk mengganti ban ternyata memang berharga mahal lantaran masuk pit untuk mengganti ban jorge martin yang tadinya berada di urutan kedua harus melihat posisinya melorot jauh ia pada akhirnya harus masuk pit lagi untuk kembali memakai ban kering pada akhirnya jorge martin hanya mampu menuai satu poin karena finis di posisi baca juga hasil motogp san marino marc marquez menang back back marquez mengatakan bahwa dirinya mengikuti bocah lokal asal italia bagnaia untuk tidak mengganti ban seperti diketahui san marino terletak hanya sepelemparan batu dari italia negara bagnaia berasal pebalap lokal memutuskan untuk tetap di luar tak masuk pit jadi mereka pasti lebih tahu dari saya tutur marquez menambahkan sementara itu martin mengakui bahwa dirinya telah membuat kesalahan besar ketika memutuskan untuk masuk pit dengan lap tersisa&#39;</pre>
+<div class="jp-RenderedImage jp-OutputArea-output ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA90AAAJOCAYAAACqS2TfAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAABPW0lEQVR4nO3deViU9cLG8XuQ3QC3BHGDjFJzwzQVM6QUS8VMWzxoZaaZS+Yuaq4pKppHc83MPc3KLE0rOWqumRsuqbkkLqkc3ABFBYHn/cOXOU64QPE0QN/Pdc31Mr9nmXsmzrze/J7FYhiGIQAAAAAAkOsc7B0AAAAAAICCitINAAAAAIBJKN0AAAAAAJiE0g0AAAAAgEko3QAAAAAAmITSDQAAAACASSjdAAAAAACYhNINAAAAAIBJKN0AAAAAAJiE0g0A+FvMmzdPFotFO3fu/Ntfu2HDhmrYsOGf2tbPz0/Nmzf/yxkuXLggFxeXP/0ZTJ8+XfPmzcsyfuLECVksFptlw4cPl8Vi0YULF/5C4v+xWCwaPnx4ruzLbBaLRd27d88yPmzYMFksFnXp0kUZGRnZ3t/Zs2c1fPhw7dmzJxdTmuuv/L4DAHKfo70DAADwT7Bw4UKlpqZKkj755BPVqlUrR9tPnz5dJUqUUPv27W3GS5UqpZ9++kkVKlTIragFimEYevfddzVlyhRFRERozJgxOdr+7NmzGjFihPz8/FSjRg1zQuay6dOn2zsCAOA2zHQDAPA3mDNnjkqWLKnatWtryZIlun79era2u3bt2j2Xu7i4qG7dunrwwQdzI2aed/PmTaWlpWVr3bS0NL3++uuaMmWKxo8fn+PCnd9k/q5UrlxZlStXtnMaAEAmSjcAwC7udghs+/bt5efnZ32eefj0+PHjNW7cOPn5+cnNzU0NGzbUkSNHdPPmTUVERMjX11deXl564YUXFB8ff9/XHzFihOrUqaNixYrJ09NTNWvW1CeffCLDMO64/vfff6+aNWvKzc1NFStW1Jw5c7L9Xn/++Wf98ssvevXVV9WpUyclJiZq2bJld/xMqlSpoo0bNyooKEju7u7q0KGD/Pz8dODAAW3YsEEWi0UWi8X6Gd3p8PI7+fXXX/XQQw+pTp061s8nLi5OnTt3VpkyZeTs7Cx/f3+NGDEi26X2dpk5oqKiNHr0aJUrV06urq6qVauW1q5dm2X9o0ePKjw8XCVLlpSLi4sqVaqkadOm2azz448/ymKxaOHCherTp49Kly4tFxcXHTt27L55bty4odatW2vx4sWaPXu2+vbta7P82LFjeuONNxQQECB3d3eVLl1aYWFh2r9/v83r165dW5L0xhtvWD/72w+137lzp1q0aKFixYrJ1dVVgYGB+vzzz7Pk2bx5s+rVqydXV1eVLl1aQ4YM0ezZs2WxWHTixAnrehkZGYqKilLFihXl4uKikiVL6rXXXtPvv/9us7+7/a5kLuPwcgDIOzi8HACQL0ybNk3VqlXTtGnTlJCQoD59+igsLEx16tSRk5OT5syZo5MnT6pv377q2LGjVqxYcc/9nThxQp07d1a5cuUkSdu2bdM777yjM2fOaOjQoTbr7t27V3369FFERIS8vb01e/Zsvfnmm3r44Yf11FNP3Tf7J598Iknq0KGDypYtq549e+qTTz5Ru3btsqx77tw5tWvXTv3791dkZKQcHBw0YMAAvfjii/Ly8rIeOuzi4pKtz02SNmzYoBdeeEFPPfWUFi9eLHd3d8XFxemJJ56Qg4ODhg4dqgoVKuinn37SqFGjdOLECc2dOzfb+7/d1KlTVb58eU2aNMlaIJ977jlt2LBB9erVkyQdPHhQQUFBKleunD744AP5+Pjohx9+UI8ePXThwgUNGzbMZp8DBw5UvXr1NHPmTDk4OKhkyZL3zHDlyhU999xz2rp1q5YuXarWrVtnWefs2bMqXry4xo4dqwcffFCXLl3S/PnzVadOHcXExOjRRx9VzZo1NXfuXL3xxht677331KxZM0lSmTJlJEnr16/Xs88+qzp16mjmzJny8vLSZ599pldeeUXXrl2zngqwb98+NW7cWI888ojmz58vd3d3zZw5U4sWLcqSq0uXLpo1a5a6d++u5s2b68SJExoyZIh+/PFH7d69WyVKlLCue6ffFQBAHmQAAPA3mDt3riHJ2LFjh2EYhhEcHGwEBwdnWe/11183ypcvb30eGxtrSDKqV69upKenW8cnTZpkSDJatGhhs33Pnj0NSUZiYqJ17G6vlSk9Pd24efOmMXLkSKN48eJGRkaGdVn58uUNV1dX4+TJk9ax69evG8WKFTM6d+583/ednJxseHp6GnXr1rV5jxaLxTh27JjNusHBwYYkY+3atVn289hjj93xPWR+PnPnzrWODRs2zJBknD9/3li4cKHh7Oxs9OjRw+bz69y5s/HAAw/YvC/DMIwJEyYYkowDBw5YxyQZw4YNu+f7zMzh6+trXL9+3TqelJRkFCtWzGjUqJF1rEmTJkaZMmVs/hsZhmF0797dcHV1NS5dumQYhmGsX7/ekGQ89dRT93zt20myPmbNmpXt7dLS0ozU1FQjICDA6NWrl3V8x44dWT7fTBUrVjQCAwONmzdv2ow3b97cKFWqlPXzfumll4zChQsb58+ft66Tnp5uVK5c2ZBkxMbGGoZhGIcOHTIkGV27drXZ388//2xIMgYNGmQdu9fvyv1+3wEAfy/+JAoAyBeaNm1qM5NXqVIlSbLOPv5x/NSpU/fc37p169SoUSN5eXmpUKFCcnJy0tChQ3Xx4sUsh6fXqFHDOiMuSa6urnrkkUd08uTJ++b+/PPPlZSUZD30V7o1420Yxh1nk4sWLaqnn376vvvNjtGjR6t9+/YaO3asJk+ebPP5ffvttwoJCZGvr6/S0tKsj+eee07SrdnxP6NVq1ZydXW1Pvfw8FBYWJg2btyo9PR03bhxQ2vXrtULL7wgd3d3m9du2rSpbty4oW3bttns804z1ffSoEEDFSlSRCNGjLjroehpaWmKjIxU5cqV5ezsLEdHRzk7O+vo0aM6dOjQfV/j2LFj+vXXX9W2bVvr/m5/H+fOndPhw4cl3fosn376aZtZagcHB7388ss2+1y/fr0kZblY3hNPPKFKlSplOUw/N39XAADmoXQDAPKFYsWK2Tx3dna+5/iNGzfuuq/t27crNDRUkvTxxx9ry5Yt2rFjhwYPHixJWS5yVrx48Sz7cHFxydbF0D755BO5urrq2WefVUJCghISElStWjX5+flp3rx5Sk9Pt1m/VKlS991ndi1atEilS5dWmzZtsiz773//q5UrV8rJycnm8dhjj0nSn77dmI+Pzx3HUlNTdfXqVV28eFFpaWmaMmVKltdu2rTpHV87p59JtWrV9J///EfXrl1TcHCwjhw5kmWd3r17a8iQIWrZsqVWrlypn3/+WTt27FD16tWz9d/1v//9rySpb9++Wd5H165dbd7HxYsX5e3tnWUffxy7ePHiXd+vr6+vdXmm3PxdAQCYh3O6AQB24erqqsTExCzjuXVv6Xv57LPP5OTkpG+//dZmVvbrr7/O1dc5cuSINm/eLEk2M+W3++GHH6xlU7p1n+nc8v333+uVV15RgwYNtHbtWpUvX966rESJEqpWrZpGjx59x219fX3/1GvGxcXdcczZ2VkPPPCAnJycVKhQIb366qvq1q3bHffh7+9v8/zPfCaPP/64/vOf/6hx48YKCQnRunXr9Oijj1qXL1q0SK+99poiIyNttrtw4YKKFCly3/1nzloPHDhQrVq1uuM6ma9XvHhxa0m/3R8/q8w/7pw7d8563nims2fP2syUS7n7uwIAMA+lGwBgF35+fvriiy+UkpJivSjYxYsXtXXrVnl6epr62haLRY6OjipUqJB17Pr161q4cGGuvk7mBdQ+/vhjPfzwwzbLrl+/rueff15z5syxKd13k92Z9duVL19emzZtUqNGjazFOyAgQJLUvHlzrV69WhUqVFDRokVztN97+eqrrzR+/HjrHzOuXLmilStXqkGDBipUqJDc3d0VEhKimJgYVatWzXpkghlq1qyptWvXqlGjRtbiXbFiRUm3fgf+eDG6VatW6cyZMzb/rTLX+eNn/+ijjyogIEB79+7NUtz/KDg4WKtXr9aFCxesxTkjI0NffPGFzXqZh4ovWrTIetV0SdqxY4cOHTpkPRIDAJC/ULoBAH+rzNm5V199VR999JHatWunTp066eLFi4qKijK9cEu3zgOfOHGiwsPD9dZbb+nixYuaMGFCjq4Ifj9paWlasGCBKlWqpI4dO95xnbCwMK1YsULnz5+/7322q1atqs8++0xLly7VQw89JFdXV1WtWvW+OUqVKqUNGzaoSZMmeuqppxQdHa0qVapo5MiRio6OVlBQkHr06KFHH31UN27c0IkTJ7R69WrNnDkzy2xrdhQqVEiNGzdW7969lZGRoXHjxikpKUkjRoywrjN58mQ9+eSTatCggbp06SI/Pz9duXJFx44d08qVK7Vu3bocv+7d1KhRQ2vXrtUzzzxjLd6VKlVS8+bNNW/ePFWsWFHVqlXTrl27NH78+CzvuUKFCnJzc9Onn36qSpUq6YEHHpCvr698fX310Ucf6bnnnlOTJk3Uvn17lS5dWpcuXdKhQ4e0e/dua6kePHiwVq5cqWeeeUaDBw+Wm5ubZs6cqeTkZEmynmv/6KOP6q233tKUKVPk4OCg5557znr18rJly6pXr1659rkAAP4+nNMNAPhbXLt2TdL/Zg7r16+v+fPn68CBA3r++ec1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"
+class="
+"
+>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="s1">'kategori'</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'kategori'</span><span class="p">]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Label-Encoder">Label Encoder<a class="anchor-link" href="#Label-Encoder">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">label_encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+
+<span class="c1"># Fit and transform the labels</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'kategori'</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'kategori'</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Encoded Labels:"</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>
+Encoded Labels:
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>judul</th>
+      <th>waktu</th>
+      <th>url</th>
+      <th>konten</th>
+      <th>kategori</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MotoGP San Marino 2024: Ketika Marquez Menang ...</td>
+      <td>- 09/09/2024, 05:00 WIB</td>
+      <td>https://www.kompas.com/motogp/read/2024/09/09/...</td>
+      <td>KOMPAS.com - Marc Marquez sukses memenangi Mot...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Klasemen PON XXI 2024: Futsal Gagal Emas, Jati...</td>
+      <td>- 09/09/2024, 07:59 WIB</td>
+      <td>https://www.kompas.com/sports/read/2024/09/09/...</td>
+      <td>KOMPAS.com - Tim futsal Jawa Timur (Jatim) gag...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Hasil One Pride MMA 82: Frans Sormin Bekuk Jak...</td>
+      <td>- 09/09/2024, 14:31 WIB</td>
+      <td>https://www.kompas.com/sports/read/2024/09/09/...</td>
+      <td>KOMPAS.com - Frans Lincol Sormin mengalahkan J...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Indonesia Vs Australia, Kata Manajer Timnas so...</td>
+      <td>- 09/09/2024, 10:29 WIB</td>
+      <td>https://bola.kompas.com/read/2024/09/09/102929...</td>
+      <td>KOMPAS.com - Timnas Indonesia belum menentukan...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Dampak Kehadiran Marteen Paes untuk Persaingan...</td>
+      <td>- 09/09/2024, 11:30 WIB</td>
+      <td>https://bola.kompas.com/read/2024/09/09/113000...</td>
+      <td>KOMPAS.com - Penampilan penjaga gawang timnas ...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>Penurunan Apa Saja yang Terjadi pada Lansia? I...</td>
+      <td>- 05/09/2024, 18:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05180000468/...</td>
+      <td>KOMPAS.com - Seiring bertambahnya umur, setiap...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>Apakah Minum Kopi Pahit Bagus untuk Kesehatan?...</td>
+      <td>- 05/09/2024, 16:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05160000768/...</td>
+      <td>KOMPAS.com - Kopi kerap diminum untuk mengatas...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>Sering Digunakan untuk Diet, Ini Manfaat Keseh...</td>
+      <td>- 05/09/2024, 13:37 WIB</td>
+      <td>https://health.kompas.com/read/24I05133717468/...</td>
+      <td>KOMPAS.com - Dalam beberapa tahun terakhir, cu...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>Kenali "BEACH", Akronim untuk Tanda Peringatan...</td>
+      <td>- 05/09/2024, 14:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05140000068/...</td>
+      <td>KOMPAS.com - Gejala kanker ovarium sering kali...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>Apakah Bisa Orang Tanpa Diabetes Mengalami Hip...</td>
+      <td>- 05/09/2024, 12:00 WIB</td>
+      <td>https://health.kompas.com/read/24I05120000068/...</td>
+      <td>KOMPAS.com - Hipoglikemia umum terjadi pada pe...</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>151 rows × 5 columns</p>
+</div>
 </div>
 
 </div>
@@ -14946,11 +15285,560 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="4.-Pemodelan-Vector-Space">4. Pemodelan Vector Space<a class="anchor-link" href="#4.-Pemodelan-Vector-Space">&#182;</a></h2>
+<h3 id="Preprocessing">Preprocessing<a class="anchor-link" href="#Preprocessing">&#182;</a></h3>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Lower-Case">Lower Case<a class="anchor-link" href="#Lower-Case">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'lower_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'konten'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="n">df</span><span class="p">[[</span><span class="s1">'konten'</span><span class="p">,</span> <span class="s1">'lower_text'</span><span class="p">]]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>konten</th>
+      <th>lower_text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>KOMPAS.com - Marc Marquez sukses memenangi Mot...</td>
+      <td>kompas.com - marc marquez sukses memenangi mot...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>KOMPAS.com - Tim futsal Jawa Timur (Jatim) gag...</td>
+      <td>kompas.com - tim futsal jawa timur (jatim) gag...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>KOMPAS.com - Frans Lincol Sormin mengalahkan J...</td>
+      <td>kompas.com - frans lincol sormin mengalahkan j...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>KOMPAS.com - Timnas Indonesia belum menentukan...</td>
+      <td>kompas.com - timnas indonesia belum menentukan...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>KOMPAS.com - Penampilan penjaga gawang timnas ...</td>
+      <td>kompas.com - penampilan penjaga gawang timnas ...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>KOMPAS.com - Seiring bertambahnya umur, setiap...</td>
+      <td>kompas.com - seiring bertambahnya umur, setiap...</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>KOMPAS.com - Kopi kerap diminum untuk mengatas...</td>
+      <td>kompas.com - kopi kerap diminum untuk mengatas...</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>KOMPAS.com - Dalam beberapa tahun terakhir, cu...</td>
+      <td>kompas.com - dalam beberapa tahun terakhir, cu...</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>KOMPAS.com - Gejala kanker ovarium sering kali...</td>
+      <td>kompas.com - gejala kanker ovarium sering kali...</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>KOMPAS.com - Hipoglikemia umum terjadi pada pe...</td>
+      <td>kompas.com - hipoglikemia umum terjadi pada pe...</td>
+    </tr>
+  </tbody>
+</table>
+<p>151 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Cleansing-Text">Cleansing Text<a class="anchor-link" href="#Cleansing-Text">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'cleaned_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'lower_text'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\W'</span><span class="p">,</span> <span class="s1">' '</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+
+<span class="n">df</span><span class="p">[[</span><span class="s1">'lower_text'</span><span class="p">,</span> <span class="s1">'cleaned_text'</span><span class="p">]]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>lower_text</th>
+      <th>cleaned_text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>kompas.com - marc marquez sukses memenangi mot...</td>
+      <td>kompas com   marc marquez sukses memenangi mot...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>kompas.com - tim futsal jawa timur (jatim) gag...</td>
+      <td>kompas com   tim futsal jawa timur  jatim  gag...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>kompas.com - frans lincol sormin mengalahkan j...</td>
+      <td>kompas com   frans lincol sormin mengalahkan j...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>kompas.com - timnas indonesia belum menentukan...</td>
+      <td>kompas com   timnas indonesia belum menentukan...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>kompas.com - penampilan penjaga gawang timnas ...</td>
+      <td>kompas com   penampilan penjaga gawang timnas ...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>kompas.com - seiring bertambahnya umur, setiap...</td>
+      <td>kompas com   seiring bertambahnya umur  setiap...</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>kompas.com - kopi kerap diminum untuk mengatas...</td>
+      <td>kompas com   kopi kerap diminum untuk mengatas...</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>kompas.com - dalam beberapa tahun terakhir, cu...</td>
+      <td>kompas com   dalam beberapa tahun terakhir  cu...</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>kompas.com - gejala kanker ovarium sering kali...</td>
+      <td>kompas com   gejala kanker ovarium sering kali...</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>kompas.com - hipoglikemia umum terjadi pada pe...</td>
+      <td>kompas com   hipoglikemia umum terjadi pada pe...</td>
+    </tr>
+  </tbody>
+</table>
+<p>151 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Tokenisasi">Tokenisasi<a class="anchor-link" href="#Tokenisasi">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'tokenized_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'cleaned_text'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+<span class="n">df</span><span class="p">[[</span><span class="s1">'cleaned_text'</span><span class="p">,</span> <span class="s1">'tokenized_text'</span><span class="p">]]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>cleaned_text</th>
+      <th>tokenized_text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>kompas com   marc marquez sukses memenangi mot...</td>
+      <td>[kompas, com, marc, marquez, sukses, memenangi...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>kompas com   tim futsal jawa timur  jatim  gag...</td>
+      <td>[kompas, com, tim, futsal, jawa, timur, jatim,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>kompas com   frans lincol sormin mengalahkan j...</td>
+      <td>[kompas, com, frans, lincol, sormin, mengalahk...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>kompas com   timnas indonesia belum menentukan...</td>
+      <td>[kompas, com, timnas, indonesia, belum, menent...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>kompas com   penampilan penjaga gawang timnas ...</td>
+      <td>[kompas, com, penampilan, penjaga, gawang, tim...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>kompas com   seiring bertambahnya umur  setiap...</td>
+      <td>[kompas, com, seiring, bertambahnya, umur, set...</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>kompas com   kopi kerap diminum untuk mengatas...</td>
+      <td>[kompas, com, kopi, kerap, diminum, untuk, men...</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>kompas com   dalam beberapa tahun terakhir  cu...</td>
+      <td>[kompas, com, dalam, beberapa, tahun, terakhir...</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>kompas com   gejala kanker ovarium sering kali...</td>
+      <td>[kompas, com, gejala, kanker, ovarium, sering,...</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>kompas com   hipoglikemia umum terjadi pada pe...</td>
+      <td>[kompas, com, hipoglikemia, umum, terjadi, pad...</td>
+    </tr>
+  </tbody>
+</table>
+<p>151 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Stopword-Removal">Stopword Removal<a class="anchor-link" href="#Stopword-Removal">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">'indonesian'</span><span class="p">))</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">'no_stopwords_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'tokenized_text'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tokens</span><span class="p">:</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">])</span>
+
+<span class="n">df</span><span class="p">[[</span><span class="s1">'tokenized_text'</span><span class="p">,</span> <span class="s1">'no_stopwords_text'</span><span class="p">]]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tokenized_text</th>
+      <th>no_stopwords_text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[kompas, com, marc, marquez, sukses, memenangi...</td>
+      <td>[kompas, com, marc, marquez, sukses, memenangi...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[kompas, com, tim, futsal, jawa, timur, jatim,...</td>
+      <td>[kompas, com, tim, futsal, jawa, timur, jatim,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[kompas, com, frans, lincol, sormin, mengalahk...</td>
+      <td>[kompas, com, frans, lincol, sormin, mengalahk...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[kompas, com, timnas, indonesia, belum, menent...</td>
+      <td>[kompas, com, timnas, indonesia, menentukan, w...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[kompas, com, penampilan, penjaga, gawang, tim...</td>
+      <td>[kompas, com, penampilan, penjaga, gawang, tim...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>[kompas, com, seiring, bertambahnya, umur, set...</td>
+      <td>[kompas, com, seiring, bertambahnya, umur, ora...</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>[kompas, com, kopi, kerap, diminum, untuk, men...</td>
+      <td>[kompas, com, kopi, kerap, diminum, mengatasi,...</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>[kompas, com, dalam, beberapa, tahun, terakhir...</td>
+      <td>[kompas, com, cuka, apel, madu, pilihan, popul...</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>[kompas, com, gejala, kanker, ovarium, sering,...</td>
+      <td>[kompas, com, gejala, kanker, ovarium, kali, m...</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>[kompas, com, hipoglikemia, umum, terjadi, pad...</td>
+      <td>[kompas, com, hipoglikemia, penderita, diabete...</td>
+    </tr>
+  </tbody>
+</table>
+<p>151 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Stemming">Stemming<a class="anchor-link" href="#Stemming">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14958,23 +15846,15 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># menyimpan modul CounVectorizer kedalam variable vectorizer</span>
-<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Membuat objek Stemmer dari Sastrawi</span>
+<span class="n">factory</span> <span class="o">=</span> <span class="n">StemmerFactory</span><span class="p">()</span>
+<span class="n">stemmer</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_stemmer</span><span class="p">()</span>
 
-<span class="c1"># melakukan daftar terms dari dataset yang telah di-preprocessed kemudian mengubahnya (tranformasi) ke dalam bentuk numerik menggunakan fit_transform()</span>
-<span class="n">X_tf</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">berita</span><span class="p">[</span><span class="s1">'processed_text'</span><span class="p">])</span>
+<span class="c1"># Menggunakan Sastrawi untuk stemming teks</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'stemmed_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'no_stopwords_text'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tokens</span><span class="p">:</span> <span class="p">[</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">])</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'final_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'stemmed_text'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
-<span class="c1"># mengonversi hasil dari vectorizer dari bentuk sparse matrix ke dalam bentuk DataFrame</span>
-<span class="n">df_tf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_tf</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
-
-<span class="c1"># Inisialisasi TfidfTransformer</span>
-<span class="n">tfidf_transformer</span> <span class="o">=</span> <span class="n">TfidfTransformer</span><span class="p">()</span>
-
-<span class="c1"># Transformasi dari TF ke TF-IDF</span>
-<span class="n">X_tfidf</span> <span class="o">=</span> <span class="n">tfidf_transformer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_tf</span><span class="p">)</span>
-
-<span class="c1"># Mengonversi hasil TF-IDF ke DataFrame</span>
-<span class="n">df_tfidf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_tfidf</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
+<span class="n">df</span><span class="p">[[</span><span class="s1">'no_stopwords_text'</span><span class="p">,</span> <span class="s1">'final_text'</span><span class="p">]]</span>
 </pre></div>
 
      </div>
@@ -14982,17 +15862,121 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>no_stopwords_text</th>
+      <th>final_text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[kompas, com, marc, marquez, sukses, memenangi...</td>
+      <td>kompas com marc marquez sukses tang motogp san...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[kompas, com, tim, futsal, jawa, timur, jatim,...</td>
+      <td>kompas com tim futsal jawa timur jatim gagal r...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[kompas, com, frans, lincol, sormin, mengalahk...</td>
+      <td>kompas com frans lincol sormin kalah jaka naib...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[kompas, com, timnas, indonesia, menentukan, w...</td>
+      <td>kompas com timnas indonesia tentu warna jersey...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[kompas, com, penampilan, penjaga, gawang, tim...</td>
+      <td>kompas com tampil jaga gawang timnas indonesia...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>[kompas, com, seiring, bertambahnya, umur, ora...</td>
+      <td>kompas com iring tambah umur orang alami turun...</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>[kompas, com, kopi, kerap, diminum, mengatasi,...</td>
+      <td>kompas com kopi kerap minum atas kantuk minum ...</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>[kompas, com, cuka, apel, madu, pilihan, popul...</td>
+      <td>kompas com cuka apel madu pilih populer kalang...</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>[kompas, com, gejala, kanker, ovarium, kali, m...</td>
+      <td>kompas com gejala kanker ovarium kali muncul s...</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>[kompas, com, hipoglikemia, penderita, diabete...</td>
+      <td>kompas com hipoglikemia derita diabetes kait g...</td>
+    </tr>
+  </tbody>
+</table>
+<p>151 rows × 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[29]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># menyimpan model ke dalam file CSV baru</span>
-<span class="n">df_tf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'VSM.csv'</span><span class="p">)</span>
-<span class="n">df_tfidf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'VSM dengan Pembobotan.csv'</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'konten'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'kategori'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 </pre></div>
 
      </div>
@@ -15007,21 +15991,65 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="5.-Hasil">5. Hasil<a class="anchor-link" href="#5.-Hasil">&#182;</a></h2>
+<h4 id="Split-Data">Split Data<a class="anchor-link" href="#Split-Data">&#182;</a></h4>
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Xtrain</span><span class="p">,</span> <span class="n">Xtest</span><span class="p">,</span><span class="n">Ytrain</span><span class="p">,</span><span class="n">Ytest</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="TF-IDF">TF-IDF<a class="anchor-link" href="#TF-IDF">&#182;</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vect</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vect</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">)</span>
+
+<span class="n">X_array</span> <span class="o">=</span> <span class="n">vect</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[38]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dfTF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'VSM.csv'</span><span class="p">)</span>
-<span class="n">dfTF</span> <span class="o">=</span> <span class="n">dfTF</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"Unnamed: 0"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
-<span class="n">dfTF</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_array</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -15039,321 +16067,25 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[38]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 
 
 
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>abdominal</th>
-      <th>abdullah</th>
-      <th>abdurachman</th>
-      <th>abnormal</th>
-      <th>absen</th>
-      <th>abstrak</th>
-      <th>academy</th>
-      <th>acara</th>
-      <th>aceh</th>
-      <th>achilles</th>
-      <th>...</th>
-      <th>yuli</th>
-      <th>yulia</th>
-      <th>zambo</th>
-      <th>zat</th>
-      <th>zedoaria</th>
-      <th>ziad</th>
-      <th>zink</th>
-      <th>zirkzee</th>
-      <th>zona</th>
-      <th>zymuno</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>95</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>96</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>97</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>98</th>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>99</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-<p>100 rows × 4600 columns</p>
-</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>array([[0.        , 0.        , 0.01719503, ..., 0.        , 0.        ,
+        0.        ],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+        0.        ],
+       [0.        , 0.        , 0.0155655 , ..., 0.        , 0.        ,
+        0.        ],
+       ...,
+       [0.        , 0.        , 0.01550865, ..., 0.        , 0.        ,
+        0.        ],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+        0.        ],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+        0.        ]])</pre>
 </div>
 
 </div>
@@ -15367,12 +16099,12 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[39]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dfTFIDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'VSM dengan Pembobotan.csv'</span><span class="p">)</span>
-<span class="n">dfTFIDF</span> <span class="o">=</span> <span class="n">dfTFIDF</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"Unnamed: 0"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
-<span class="n">dfTFIDF</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fitur_kata</span> <span class="o">=</span> <span class="n">vect</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Jumlah fitur kata dari hasil TF-IDF:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fitur_kata</span><span class="p">))</span>
 </pre></div>
 
      </div>
@@ -15390,321 +16122,85 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[39]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Jumlah fitur kata dari hasil TF-IDF: 5672
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'tfidf_vectorizer.pkl'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">vect</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>  <span class="c1"># Menyimpan vectorizer</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'tfidf_matrix.pkl'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>  <span class="c1"># Menyimpan hasil transformasi (TF-IDF matrix)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Melatih-Model-Logistic-Regression">Melatih Model Logistic Regression<a class="anchor-link" href="#Melatih-Model-Logistic-Regression">&#182;</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Membuat model Logistic Regression</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+
+<span class="c1"># Melatih model dengan data pelatihan</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Ytrain</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[21]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>abdominal</th>
-      <th>abdullah</th>
-      <th>abdurachman</th>
-      <th>abnormal</th>
-      <th>absen</th>
-      <th>abstrak</th>
-      <th>academy</th>
-      <th>acara</th>
-      <th>aceh</th>
-      <th>achilles</th>
-      <th>...</th>
-      <th>yuli</th>
-      <th>yulia</th>
-      <th>zambo</th>
-      <th>zat</th>
-      <th>zedoaria</th>
-      <th>ziad</th>
-      <th>zink</th>
-      <th>zirkzee</th>
-      <th>zona</th>
-      <th>zymuno</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0.000000</td>
-      <td>0.04922</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.065383</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>95</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.044749</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>96</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>97</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>98</th>
-      <td>0.049152</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>99</th>
-      <td>0.000000</td>
-      <td>0.00000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>100 rows × 4600 columns</p>
-</div>
+<style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LogisticRegression()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LogisticRegression</label><div class="sk-toggleable__content"><pre>LogisticRegression()</pre></div></div></div></div></div>
 </div>
 
 </div>
@@ -15713,8 +16209,204 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<h3 style="text-align: center;font-weight: bold;display: block;">Tugas Pertemuan ke 3</h3>
-	<a href="Logistic Regression.html" style="text-align: center;font-weight: bold;display: block;">Logistic Regression</a>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the model to a file using pickle</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'logistic_model'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Testing-Data-Baru">Testing Data Baru<a class="anchor-link" href="#Testing-Data-Baru">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load TF-IDF dan model logistic regression dari file pickle</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"tfidf_vectorizer.pkl"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">tfidf_vectorizer</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"logistic_model"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transformasi data baru dengan TF-IDF yang sudah dilatih</span>
+<span class="n">X_baru</span> <span class="o">=</span> <span class="n">tfidf_vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Xtest</span><span class="p">)</span>
+
+<span class="c1"># Lakukan prediksi dengan model logistic regression</span>
+<span class="n">prediksi</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_baru</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Akurasi">Akurasi<a class="anchor-link" href="#Akurasi">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tampilkan hasil prediksi</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Prediksi:"</span><span class="p">,</span> <span class="n">prediksi</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Prediksi: [0 1 0 1 0 0 1 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 1 0 0 0 0]
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Ytest</span><span class="p">,</span> <span class="n">prediksi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Akurasi: </span><span class="si">{</span><span class="n">accuracy</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Akurasi: 96.77%
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
 </body>
+
+
+
+
+
+
+
 </html>
